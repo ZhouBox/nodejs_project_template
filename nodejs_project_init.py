@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import sys
 import os
 
@@ -8,31 +9,31 @@ def create_project(name):
 		return
 	os.mkdir(name)
 	os.chdir(name)
-	index_f = open('index.js', 'w')
-	index_code = """
+	app_f = open('app.js', 'w')
+	app_code = """
 var server = require('./server');
 var router = require('./router');
 var config = require('./config');
 	
     
-server.start(router.router, config.router_mapping, config.listen_port);
+server.start(router, config);
 		
 
 """
-	index_f.write(index_code)
-	index_f.close()
+	app_f.write(app_code)
+	app_f.close()
 
 	sever_f = open('server.js', 'w')
 	sever_code = """
 var http = require('http');
 var url = require('url');
 
-function start(router, router_mapping, listen_port) {
+function start(router, config) {
 	function onRequest(request, response) {
 		var location = url.parse(request.url).pathname;
-		router(router_mapping, location, request, response);
+		router.router(config.router_mapping, location, request, response);
 	}
-	http.createServer(onRequest).listen(listen_port);
+	http.createServer(onRequest).listen(config.listen_port, config.listen_ip);
 
 }
 
@@ -70,6 +71,7 @@ exports.router = router
 var request_handler = require('./request_handler');
 	
 var listen_port = 8888;
+var listen_ip = '127.0.0.1';
 
 var router_mapping = {};
 
