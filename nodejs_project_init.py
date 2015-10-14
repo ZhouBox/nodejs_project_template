@@ -8,8 +8,8 @@ def create_project(name):
 		return
 	os.mkdir(name)
 	os.chdir(name)
-	index_f = open('index.js', 'w')
-	index_code = """
+	app_f = open('app.js', 'w')
+	app_code = """
 var server = require('./server');
 var router = require('./router');
 var config = require('./config');
@@ -19,8 +19,8 @@ server.start(router.router, config.router_mapping, config.listen_port);
 		
 
 """
-	index_f.write(index_code)
-	index_f.close()
+	app_f.write(index_code)
+	app_f.close()
 
 	sever_f = open('server.js', 'w')
 	sever_code = """
