@@ -1,9 +1,10 @@
 
 var server = require('./server');
 var router = require('./router');
-var config = require('./config');
+var config_router = require('./config_router');
+var config_app = require('./config_app');
 	
     
-server.start(router, config);
+server.start(config_app, router, config_router);
 		
 

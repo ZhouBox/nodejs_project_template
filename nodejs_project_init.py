@@ -13,10 +13,11 @@ def create_project(name):
 	app_code = """
 var server = require('./server');
 var router = require('./router');
-var config = require('./config');
+var config_router = require('./config_router');
+var config_app = require('./config_app');
 	
     
-server.start(router, config);
+server.start(config_app, router, config_router);
 		
 
 """
@@ -28,12 +29,13 @@ server.start(router, config);
 var http = require('http');
 var url = require('url');
 
-function start(router, config) {
+function start(config_app, router, config_router) {
 	function onRequest(request, response) {
 		var location = url.parse(request.url).pathname;
-		router.router(config.router_mapping, location, request, response);
+		router.router(config_router.router_mapping, location, request, response);
 	}
-	http.createServer(onRequest).listen(config.listen_port, config.listen_ip);
+	config_app.app = http.createServer(onRequest);
+	config_app.app.listen(config_app.listen_port, config_app.listen_ip);
 
 }
 
@@ -65,26 +67,45 @@ exports.router = router
 	router_f.write(router_code)
 	router_f.close()
 
-	router_config_f = open('config.js', 'w')
+	router_config_f = open('config_router.js', 'w')
 	router_config_code = """
 
 var request_handler = require('./request_handler');
 	
-var listen_port = 8888;
-var listen_ip = '127.0.0.1';
-
 var router_mapping = {};
 
 router_mapping['/'] = request_handler.helloworld;
 
 
-exports.listen_port = listen_port;
+
 exports.router_mapping = router_mapping;
 
 
 """
 	router_config_f.write(router_config_code)
 	router_config_f.close()
+	
+	app_config_f = open('config_app.js', 'w')
+	app_config_code = """
+
+
+	
+var listen_port = 8888;
+
+var listen_ip = '127.0.0.1';
+
+var app = null;
+
+
+
+exports.listen_port = listen_port;
+exports.listen_ip = listen_ip;
+exports.app = app;
+
+
+"""
+	app_config_f.write(app_config_code)
+	app_config_f.close()
 
 	request_handler_f = open('request_handler.js', 'w')
 	request_handler_code = """
