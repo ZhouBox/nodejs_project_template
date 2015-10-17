@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM daocloud.io/ubuntu:14.04
 MAINTAINER zhx910322@163.com
 
 RUN mkdir -p /app
@@ -7,12 +7,16 @@ WORKDIR /app
 
 COPY test/* /app/
 
-ADD docker-entrypoint.sh /app/docker-entrypoint.sh 
+
+RUN apt-get update 
+RUN apt-get install -y nodejs 
 
 
 EXPOSE 8888
 
-RUN sh /app/docker-entrypoint.sh
+ENTRYPOINT ["nodejs", "app.js"]
+
+
 
 
 
